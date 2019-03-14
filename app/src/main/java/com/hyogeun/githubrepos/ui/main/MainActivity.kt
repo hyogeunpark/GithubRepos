@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
                 dismissLoading()
                 if (response?.isSuccessful == true) {
                     response.body()?.let { repos ->
-                        mRepos.addAll(repos.sortedBy { repo ->
+                        mRepos.addAll(repos.sortedByDescending { repo ->
                             repo.starCount
                         })
                     }
