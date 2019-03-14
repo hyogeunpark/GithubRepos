@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getUser(userName: String) {
         showLoading()
+        mRepos.clear()
         RestClient.service.user(userName).enqueue(object : Callback<User> {
             override fun onFailure(call: Call<User>, t: Throwable) {
                 dismissLoading()
