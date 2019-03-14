@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="com.hyogeun.githubrepos.common.Bindings"/>
+        <variable name="user" type="com.hyogeun.githubrepos.model.User"/>
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <com.hyogeun.githubrepos.ui.views.SquareImageView
+                android:id="@+id/user_image"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                tools:src="@drawable/ic_launcher_background"/>
+
+        <android.support.v7.widget.AppCompatTextView
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="@{user.name}"
+                android:textColor="@android:color/black"
+                app:layout_constraintTop_toTopOf="@+id/user_image"
+                app:layout_constraintBottom_toBottomOf="@+id/user_image"
+                app:layout_constraintLeft_toRightOf="@+id/user_image"
+                tools:text="hyogeunpark"/>
+    </android.support.constraint.ConstraintLayout>
+</layout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable name="repo" type="com.hyogeun.githubrepos.model.Repo"/>
+    </data>
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+        <android.support.v7.widget.AppCompatTextView
+                style="@style/TextAppearance.AppCompat.Large"
+                android:id="@+id/repo_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginEnd="4dp"
+                android:text="@{repo.name}"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/repo_star_count"
+                tools:text="gradationpager"/>
+
+        <android.support.v7.widget.AppCompatTextView
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:id="@+id/repo_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:text="@{repo.description}"
+                android:textColor="@android:color/black"
+                app:layout_constraintTop_toBottomOf="@+id/repo_name"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/repo_star_count"
+                tools:text="It is a library to make the background color of the view pager naturally move during the swipe."/>
+
+        <android.support.v7.widget.AppCompatTextView
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:id="@+id/repo_star_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/red"
+                android:textStyle="bold"
+                android:text="@{`` + repo.starCount}"
+                app:layout_constraintTop_toTopOf="@+id/repo_name"
+                app:layout_constraintBottom_toBottomOf="@+id/repo_description"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:text="50"/>
+    </android.support.constraint.ConstraintLayout>
+</layout>
