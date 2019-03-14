@@ -3,6 +3,7 @@ package com.hyogeun.githubrepos.ui.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -46,38 +47,74 @@ class MainActivity : AppCompatActivity() {
         }
         val userName = intent.getStringExtra(EXTRA_USER_NAME) ?: "hyogeunpark"
         getUser(userName)
-        getRepos(userName)
+        main_refresh.setOnRefreshListener {
+            dismissLoading()
+            getUser(userName)
+        }
     }
 
     private fun getUser(userName: String) {
-        RestClient.service.user(userName).enqueue(object: Callback<User> {
+        showLoading()
+        RestClient.service.user(userName).enqueue(object : Callback<User> {
             override fun onFailure(call: Call<User>, t: Throwable) {
+                dismissLoading()
+                showError(getString(R.string.error_network))
             }
 
             override fun onResponse(call: Call<User>, response: Response<User>?) {
-                if(response?.isSuccessful == true) {
+                dismissLoading()
+                if (response?.isSuccessful == true) {
                     response.body()?.let { mRepos.add(0, it) }
-                    mAdapter.notifyDataSetChanged()
+                    getRepos(userName)
+                } else {
+                    showError(getString(R.string.error_user))
                 }
             }
         })
     }
 
     private fun getRepos(userName: String) {
-        RestClient.service.repos(userName).enqueue(object: Callback<ArrayList<Repo>> {
+        showLoading()
+        RestClient.service.repos(userName).enqueue(object : Callback<ArrayList<Repo>> {
             override fun onFailure(call: Call<ArrayList<Repo>>, t: Throwable) {
+                dismissLoading()
+                showError(getString(R.string.error_network))
             }
 
             override fun onResponse(call: Call<ArrayList<Repo>>, response: Response<ArrayList<Repo>>?) {
-                if(response?.isSuccessful == true) {
-                    response.body()?.let { mRepos.addAll(it) }
+                dismissLoading()
+                if (response?.isSuccessful == true) {
+                    response.body()?.let { repos ->
+                        mRepos.addAll(repos.sortedBy { repo ->
+                            repo.starCount
+                        })
+                    }
                     mAdapter.notifyDataSetChanged()
+                } else {
+                    showError(getString(R.string.error_repo))
                 }
             }
         })
     }
 
-    class GithubReposAdapter(private val mRepos: ArrayList<in BaseModel>) : RecyclerView.Adapter<BaseViewHolder<out BaseModel>>() {
+    private fun showLoading() {
+        main_refresh.isRefreshing = true
+    }
+
+    private fun dismissLoading() {
+        main_refresh.isRefreshing = false
+    }
+
+    private fun showError(error: String) {
+        Snackbar.make(
+            window.decorView.findViewById(android.R.id.content),
+            error,
+            Snackbar.LENGTH_SHORT
+        ).show()
+    }
+
+    class GithubReposAdapter(private val mRepos: ArrayList<in BaseModel>) :
+        RecyclerView.Adapter<BaseViewHolder<out BaseModel>>() {
 
         private val USER: Int = 3998
         private val REPOS: Int = 3999
@@ -95,10 +132,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onBindViewHolder(holder: BaseViewHolder<out BaseModel>, position: Int) {
-            if(getItemViewType(position) == USER) {
-                (holder as UserViewHolder).bind(mRepos[position] as User)
-            } else {
-                (holder as RepoViewHolder).bind(mRepos[position] as Repo)
+            val item = mRepos[position]
+            val viewType = getItemViewType(position)
+            if (viewType == USER && item is User) {
+                (holder as UserViewHolder).bind(item)
+            } else if (viewType == REPOS && item is Repo) {
+                (holder as RepoViewHolder).bind(item)
             }
         }
 
